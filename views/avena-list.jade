@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1 All Avenas
+
+
+  ul
+    each avena in avenas
+      li
+        a(href='/avena/#{avena.name}') #{avena.name}
+        |  #{avena.url}  #{avena.period}

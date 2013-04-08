@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1 Create new Avena flakes
+
+  form(action='/avena/', method='POST')
+    p
+      label(for='name') name
+      input#name(type='text', name='name', placeholder='your avena name here')
+    p
+      label(for='url') url
+      input#url(type='url', name='url', placeholder='your avena url here')
+    p
+      label(for='period') period
+      input#period(type='text', name='period', placeholder='your avena period here')
+    p
+      button(type='submit') Save

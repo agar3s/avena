@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1 #{avena.name}
+
+  p #{avena.url}
+  p #{avena.period}
+  p
+    ul
+      each flake in avena.flakes
+        li #{flake.data}

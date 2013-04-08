@@ -2,7 +2,7 @@
 var express = require('express')
   , http = require('http')
   , path = require('path')
-  , HojuelaProvider = require('./hojuelaProvider-mongodb').HojuelaProvider;
+  , mongoose = require('mongoose');
 
 var app = express();
 
@@ -24,11 +24,57 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', function(req, res){
-  res.render("index");
+
+mongoose.connect('mongodb://localhost/avena');
+var ObjectId = mongoose.Schema.Types.ObjectId;
+
+var FlakeSchema = new mongoose.Schema({
+  datetime: { type: Date, default: Date.now },
+  data:[mongoose.Schema.Types.Mixed]
 });
 
-var hojuelaProvider = new HojuelaProvider('localhost', 27017);
+var AvenaSchema = new mongoose.Schema({
+  name: String,
+  url: String,
+  period: Number,
+  flakes:[ObjectId]
+});
+
+var Avena = mongoose.model('Avena', AvenaSchema);
+
+app.get('/', function(req, res){
+  res.render('index');
+});
+
+app.get('/avena/', function(req, res){
+  Avena.find({}, function(err, avenas){
+    res.render('avena-list', {avenas: avenas});
+  })
+});
+
+app.post('/avena/', function(req, res){
+  var b = req.body;
+  new Avena({
+    name: b.name,
+    url: b.url,
+    period: b.period
+  }).save(function(err){
+    if(err) send.json(err);
+    res.redirect('/avena/'+b.name)
+  });
+});
+
+app.get('/avena/new', function(req, res){
+  res.render('new');
+});
+
+app.get('/avena/:avena', function(req, res){
+  Avena.findOne({name:req.params.avena}, function(err, avena){
+    res.render('avena', {avena: avena});
+  })
+});
+
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
