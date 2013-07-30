@@ -6,6 +6,14 @@ block content
   p #{avena.url}
   p #{avena.period}
   p
-    ul
+    - var data = []
       each flake in avena.flakes
-        li #{flake.data}
+        - data.push(flake.data[avena.variable]);
+
+  script
+    var chart = d3.select("body").append("div").attr("class", "chart");
+    var datas = [#{data}];
+    console.log(datas);
+    chart.selectAll("div").data(datas)
+      .enter().append("div")
+      .style("width", function(d) { return d * 10 + "px"; }).text(function(d) { return d; });
